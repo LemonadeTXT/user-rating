@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using UserRating.Data;
-using UserRating.Models;
 
 namespace UserRating
 {
