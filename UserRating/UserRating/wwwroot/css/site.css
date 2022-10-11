@@ -1,0 +1,30 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+span.field-validation-error {
+    color: red;
+}
+
+img.float-left{
+    float: left;
+}
+
+button:hover.enable-hover {
+    transform: scale(1.1);
+}

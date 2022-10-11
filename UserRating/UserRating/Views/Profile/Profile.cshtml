@@ -1,0 +1,28 @@
+﻿@model UserRating.Models.User;
+
+@{
+}
+
+<h1>Profile</h1>
+<br />
+<div class="card mb-2">
+    <div class="card-header">
+        <h5>
+            @Model.FirstName @Model.LastName
+        </h5>
+    </div>
+    <div class="card-body">
+        <img class="float-left" src="~/images/empty icon.png" style="width:200px; height:200px; margin-right:15px;">
+        <p>
+            <b>Age:</b> @Model.Age
+        </p>
+        <p>
+            <b>City:</b> @Model.City
+        </p>
+        <p>
+            <b>About Me:</b> @Model.AboutMe
+        </p>
+    </div>
+</div>
+<br />
+<a class="btn btn-primary" asp-area="" asp-controller="Profile" asp-action="ProfileChanger">Change Profile</a>
