@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System.Security.Claims;
-using UserRating.Data;
+using UserRating.Infrastructure.Connection;
+using UserRating.Infrastructure.Repository;
+using UserRating.Infrastructure.RepositoryInterfaces;
+using UserRating.Infrastructure.ServiceInterfaces;
+using UserRating.Infrastructure.Services;
 
 namespace UserRating
 {
@@ -15,14 +16,21 @@ namespace UserRating
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddSingleton(new ConnectionSettings()
+            {
+                ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+            });
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/User/Login");
                 });
+
+            builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
 
             var app = builder.Build();
 
@@ -44,7 +52,7 @@ namespace UserRating
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=User}/{action=Main}/{id?}");
+                pattern: "{controller=Home}/{action=HomePage}/{id?}");
 
             app.Run();
         }
