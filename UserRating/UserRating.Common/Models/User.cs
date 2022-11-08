@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using UserRating.Enums;
+﻿using UserRating.Enums;
 
 namespace UserRating.Models
 {
@@ -13,6 +12,7 @@ namespace UserRating.Models
         public string? AboutMe { get; set; }
         public int Likes { get; set; }
         public int Dislikes { get; set; }
+        public string? Email { get; set; }
         public string? Login { get; set; }
         public string? Password { get; set; }
         public byte[]? Avatar { get; set; }
