@@ -17,6 +17,10 @@ namespace UserRating.Infrastructure.ServiceInterfaces
 
         void Edit(User user);
 
+        void RemoveAvatar(int id);
+
         void Create(User user);
+
+        int GetLastId();
     }
 }

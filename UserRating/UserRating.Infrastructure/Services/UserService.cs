@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using UserRating.Infrastructure.RepositoryInterfaces;
 using UserRating.Infrastructure.ServiceInterfaces;
 using UserRating.Models;
@@ -39,11 +35,21 @@ namespace UserRating.Infrastructure.Services
             _userRepository.Edit(user);
         }
 
+        public void RemoveAvatar(int id)
+        {
+            _userRepository.RemoveAvatar(id);
+        }
+
         public void Create(User user)
         {
             user.Password = Convert.ToBase64String(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(user.Password)));
 
             _userRepository.Create(user);
+        }
+
+        public int GetLastId()
+        {
+            return _userRepository.GetLastId();
         }
     }
 }
