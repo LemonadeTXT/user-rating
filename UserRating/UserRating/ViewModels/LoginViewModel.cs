@@ -1,18 +1,17 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UserRating.ViewModels
 {
-    public class LogInViewModel
+    public class LoginViewModel
     {
-        [MinLength(3)]
-        [StringLength(20)]
-        [Required(ErrorMessage = "Please enter login...")]
+        [Required(ErrorMessage = "Please enter login!")]
+        [StringLength(20, MinimumLength = 3, 
+            ErrorMessage = "The LOGIN length must be between 3 and 20 characters!")]
         public string? Login { get; set; }
 
-        [MinLength(3)]
-        [StringLength(20)]
-        [Required(ErrorMessage = "Please enter password...")]
+        [Required(ErrorMessage = "Please enter password!")]
+        [StringLength(20, MinimumLength = 3, 
+            ErrorMessage = "The PASSWORD length must be between 3 and 20 characters!")]
         [DataType(DataType.Password)]
         public string? Password { get; set; }
     }
