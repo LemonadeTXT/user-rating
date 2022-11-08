@@ -1,14 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using UserRating.Models;
+using UserRating.Infrastructure.ServiceInterfaces;
 
 namespace UserRating.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IUserService _userService;
+
+        public HomeController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         public IActionResult HomePage()
         {
-            return View();
+            return View(_userService.GetAll());
         }
     }
 }
