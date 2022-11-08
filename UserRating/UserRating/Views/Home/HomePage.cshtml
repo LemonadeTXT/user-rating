@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Main Page";
 }
+
 <h1>@ViewData["Title"]</h1>
 
 @foreach (var user in Model)
@@ -12,7 +13,16 @@
             </h5>
         </div>
         <div class="card-body">
-            <img class="float-left" src="~/images/empty icon.png" style="width:200px; height:200px; margin-right:15px;">
+            @if (@user.Avatar == null)
+            {
+                <img class="float-left" src="~/images/empty icon.png" style="width:200px; height:200px; margin-right:15px;">
+            }
+            else
+            {
+                var imgsrc = string.Format("data:image/png;base64," + Convert.ToBase64String(@user.Avatar));
+
+                <img class="float-left" src="@imgsrc" style="width:200px; height:200px; margin-right:15px;">
+            }
             <p>
                 <b>Age:</b> @user.Age
             </p>
