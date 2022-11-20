@@ -1,4 +1,5 @@
-﻿using UserRating.Models;
+﻿using Microsoft.AspNetCore.Http;
+using UserRating.Models;
 
 namespace UserRating.Infrastructure.ServiceInterfaces
 {
@@ -11,6 +12,8 @@ namespace UserRating.Infrastructure.ServiceInterfaces
         void Delete(int id);
 
         void Edit(User user);
+
+        byte[] ConvertAvatarToByteArray(HttpRequest files);
 
         void RemoveAvatar(int id);
 

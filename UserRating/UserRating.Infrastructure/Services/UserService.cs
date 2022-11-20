@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography;
 using System.Text;
 using UserRating.Infrastructure.RepositoryInterfaces;
 using UserRating.Infrastructure.ServiceInterfaces;
@@ -33,6 +34,11 @@ namespace UserRating.Infrastructure.Services
         public void Edit(User user)
         {
             _userRepository.Edit(user);
+        }
+
+        public byte[] ConvertAvatarToByteArray(HttpRequest files)
+        {
+            return _userRepository.ConvertAvatarToByteArray(files);
         }
 
         public void RemoveAvatar(int id)

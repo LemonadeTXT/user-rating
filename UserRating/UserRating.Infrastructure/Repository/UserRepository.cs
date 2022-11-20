@@ -4,6 +4,8 @@ using UserRating.Infrastructure.Connection;
 using UserRating.Infrastructure.RepositoryInterfaces;
 using UserRating.Models;
 using UserRating.Enums;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace UserRating.Infrastructure.Repository
 {
@@ -138,6 +140,23 @@ namespace UserRating.Infrastructure.Repository
 
                 command.ExecuteNonQuery();
             }
+        }
+
+        public byte[] ConvertAvatarToByteArray(HttpRequest files)
+        {
+            byte[] avatarByteArray = Array.Empty<byte>();
+
+            foreach (var file in files.Form.Files)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    file.CopyTo(memoryStream);
+
+                    avatarByteArray = memoryStream.ToArray();
+                }
+            }
+
+            return avatarByteArray;
         }
 
         public void RemoveAvatar(int id)
