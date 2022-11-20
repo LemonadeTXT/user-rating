@@ -36,7 +36,7 @@ namespace UserRating.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Edit(ProfileViewModel profileViewModel)
+        public IActionResult Edit(ProfileViewModel profileViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -44,11 +44,22 @@ namespace UserRating.Controllers
 
                 profileViewModel.Avatar = _userService.ConvertAvatarToByteArray(Request);
 
-                if (!Equal(user, profileViewModel))
+                if (!EqualUsers(user, profileViewModel))
                 {
                     var id = user.Id;
 
-                    user = _mapper.Map<ProfileViewModel, User>(profileViewModel);
+                    if (!IsEmptyAvatar(profileViewModel))
+                    {
+                        user = _mapper.Map<ProfileViewModel, User>(profileViewModel);
+                    }
+                    else
+                    {
+                        var avatar = user.Avatar;
+
+                        user = _mapper.Map<ProfileViewModel, User>(profileViewModel);
+
+                        user.Avatar = avatar;
+                    }
 
                     user.Id = id;
 
@@ -77,14 +88,25 @@ namespace UserRating.Controllers
             return RedirectToAction(nameof(Edit));
         }
 
-        private bool Equal(User user, ProfileViewModel profileViewModel)
+        private bool IsEmptyAvatar(ProfileViewModel profileViewModel)
+        {
+            if (profileViewModel.Avatar != null && profileViewModel.Avatar != Array.Empty<byte>())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool EqualUsers(User user, ProfileViewModel profileViewModel)
         {
             if (user.FirstName != profileViewModel.FirstName ||
                 user.LastName != profileViewModel.LastName ||
                 user.Age != profileViewModel.Age ||
                 user.City != profileViewModel.City ||
                 user.AboutMe != profileViewModel.AboutMe ||
-                (user.Avatar != profileViewModel.Avatar && profileViewModel.Avatar != null) ||
+                (profileViewModel.Avatar != null && 
+                profileViewModel.Avatar != Array.Empty<byte>()) ||
                 user.Email != profileViewModel.Email ||
                 user.Login != profileViewModel.Login ||
                 user.Password != profileViewModel.Password)

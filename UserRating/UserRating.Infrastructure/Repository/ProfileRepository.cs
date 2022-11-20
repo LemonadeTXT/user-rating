@@ -1,9 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
-using UserRating.Common.Models;
-using UserRating.Infrastructure.Connection;
+﻿using UserRating.Infrastructure.Connection;
 using UserRating.Infrastructure.RepositoryInterfaces;
 using System.Data;
-using UserRating.Models;
+using System.Data.SqlClient;
 
 namespace UserRating.Infrastructure.Repository
 {

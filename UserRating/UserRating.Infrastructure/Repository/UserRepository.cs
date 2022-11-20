@@ -1,11 +1,10 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Data;
+﻿using System.Data;
 using UserRating.Infrastructure.Connection;
 using UserRating.Infrastructure.RepositoryInterfaces;
 using UserRating.Models;
 using UserRating.Enums;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
 
 namespace UserRating.Infrastructure.Repository
 {

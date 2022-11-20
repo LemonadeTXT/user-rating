@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 using UserRating.Infrastructure.Connection;
 using UserRating.Infrastructure.Mappers;
 using UserRating.Infrastructure.Repository;
