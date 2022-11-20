@@ -15,13 +15,13 @@
         <div class="card-body">
             @if (@user.Avatar == null)
             {
-                <img class="float-left" src="~/images/empty icon.png" style="width:200px; height:200px; margin-right:15px;">
+                <img alt="Empty Avatar" class="avatar-view" src="~/images/empty icon.png">
             }
             else
             {
                 var imgsrc = string.Format("data:image/png;base64," + Convert.ToBase64String(@user.Avatar));
 
-                <img class="float-left" src="@imgsrc" style="width:200px; height:200px; margin-right:15px;">
+                <img alt="Avatar" class="avatar-view" src="@imgsrc">
             }
             <p>
                 <b>Age:</b> @user.Age
@@ -34,12 +34,14 @@
             </p>
         </div>
         <div class="card-footer">
-            <button class="enable-hover" style="height: 65px; border: none; background: none">
-                <img src="~/images/like.png" style="width:40px; height:40px;"><p>@user.Likes</p>
-            </button>
-            <button class="enable-hover" style="height: 65px; border: none; background: none">
-                <img src="~/images/dislike.png" style="width:40px; height:40px;"><p>@user.Dislikes</p>
-            </button>
+            <form method="post">
+                <button class="enable-hover" name="id" value="@user.Id" asp-controller="Home" asp-action="Like" style="height: 65px; border: none; background: none">
+                    <img alt="Like" class="button-view" src="~/images/like.png"><p>@user.Likes</p>
+                </button>
+                <button class="enable-hover" name="id" value="@user.Id" asp-controller="Home" asp-action="Dislike" style="height: 65px; border: none; background: none">
+                    <img alt="Dislike" class="button-view" src="~/images/dislike.png"><p>@user.Dislikes</p>
+                    </button>
+            </form>
         </div>
     </div>
 }
