@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using UserRating.Infrastructure.RepositoryInterfaces;
+﻿using UserRating.Infrastructure.RepositoryInterfaces;
 using UserRating.Infrastructure.ServiceInterfaces;
 using UserRating.Models;
 
@@ -22,7 +20,7 @@ namespace UserRating.Infrastructure.Services
             foreach (User user in _userRepository.GetAll())
             {
                 if (user.Login == login &&
-                    user.Password == Convert.ToBase64String(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(password))))
+                    user.Password == password)
                 {
                     id = user.Id;
 
