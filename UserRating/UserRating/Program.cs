@@ -25,12 +25,14 @@ namespace UserRating
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = new PathString("/User/Login");
+                    options.LoginPath = new PathString("/Authentication/Login");
                 });
 
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IAuthService, AuthService>();
+            builder.Services.AddTransient<IProfileService, ProfileService>();
+            builder.Services.AddTransient<IProfileRepository, ProfileRepository>();
 
             var app = builder.Build();
 
