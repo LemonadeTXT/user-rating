@@ -59,23 +59,11 @@ namespace UserRating.Controllers
         {
             foreach (var item in users.ToList())
             {
-                if (string.IsNullOrEmpty(item.FirstName))
-                {
-                    users.Remove(item);
-                }
-                else if (string.IsNullOrEmpty(item.LastName))
-                {
-                    users.Remove(item);
-                }
-                else if (item.Age is 0)
-                {
-                    users.Remove(item);
-                }
-                else if (string.IsNullOrEmpty(item.City))
-                {
-                    users.Remove(item);
-                }
-                else if (string.IsNullOrEmpty(item.AboutMe))
+                if (string.IsNullOrEmpty(item.FirstName) ||
+                    string.IsNullOrEmpty(item.LastName) ||
+                    item.Age is 0 ||
+                    string.IsNullOrEmpty(item.City) ||
+                    string.IsNullOrEmpty(item.AboutMe))
                 {
                     users.Remove(item);
                 }

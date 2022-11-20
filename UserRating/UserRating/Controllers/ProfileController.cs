@@ -10,10 +10,12 @@ namespace UserRating.Controllers
     public class ProfileController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public ProfileController(IUserService userService)
+        public ProfileController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         [Authorize]
@@ -27,11 +29,7 @@ namespace UserRating.Controllers
         {
             var user = _userService.Get(int.Parse(User.Identity.Name));
 
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<User, ProfileViewModel>());
-
-            var mapper = new Mapper(config);
-
-            var profileViewModel = mapper.Map<User, ProfileViewModel>(user);
+            var profileViewModel = _mapper.Map<User, ProfileViewModel>(user);
 
             return View(profileViewModel);
         }
@@ -44,25 +42,13 @@ namespace UserRating.Controllers
             {
                 var user = _userService.Get(int.Parse(User.Identity.Name));
 
-                foreach (var file in Request.Form.Files)
-                {
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await file.CopyToAsync(memoryStream);
-
-                        profileViewModel.Avatar = memoryStream.ToArray();
-                    }
-                }
+                profileViewModel.Avatar = _userService.ConvertAvatarToByteArray(Request);
 
                 if (!Equal(user, profileViewModel))
                 {
                     var id = user.Id;
 
-                    var config = new MapperConfiguration(cfg => cfg.CreateMap<ProfileViewModel, User>());
-
-                    var mapper = new Mapper(config);
-
-                    user = mapper.Map<ProfileViewModel, User>(profileViewModel);
+                    user = _mapper.Map<ProfileViewModel, User>(profileViewModel);
 
                     user.Id = id;
 
@@ -93,39 +79,15 @@ namespace UserRating.Controllers
 
         private bool Equal(User user, ProfileViewModel profileViewModel)
         {
-            if (user.FirstName != profileViewModel.FirstName)
-            {
-                return false;
-            }
-            else if (user.LastName != profileViewModel.LastName)
-            {
-                return false;
-            }
-            else if (user.Age != profileViewModel.Age)
-            {
-                return false;
-            }
-            else if (user.City != profileViewModel.City)
-            {
-                return false;
-            }
-            else if (user.AboutMe != profileViewModel.AboutMe)
-            {
-                return false;
-            }
-            else if (user.Avatar != profileViewModel.Avatar && profileViewModel.Avatar != null)
-            {
-                return false;
-            }
-            else if (user.Email != profileViewModel.Email)
-            {
-                return false;
-            }
-            else if (user.Login != profileViewModel.Login)
-            {
-                return false;
-            }
-            else if (user.Password != profileViewModel.Password)
+            if (user.FirstName != profileViewModel.FirstName ||
+                user.LastName != profileViewModel.LastName ||
+                user.Age != profileViewModel.Age ||
+                user.City != profileViewModel.City ||
+                user.AboutMe != profileViewModel.AboutMe ||
+                (user.Avatar != profileViewModel.Avatar && profileViewModel.Avatar != null) ||
+                user.Email != profileViewModel.Email ||
+                user.Login != profileViewModel.Login ||
+                user.Password != profileViewModel.Password)
             {
                 return false;
             }
