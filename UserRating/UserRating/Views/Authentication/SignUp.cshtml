@@ -8,23 +8,26 @@
 <br />
 <form method="post" asp-controller="Authentication" asp-action="SignUp">
     <div>
-        <label asp-for="Login">Login</label>
+        <label>Email</label>
+        <input asp-for="Email" class="form-control" style="width: 25%" />
+        <span asp-validation-for="Email"></span><br />
+    </div>
+    <div>
+        <label>Login</label>
         <input asp-for="Login" class="form-control" style="width: 25%" />
         <span asp-validation-for="Login"></span><br />
     </div>
     <div>
-        <label asp-for="Password">Password</label>
+        <label>Password</label>
         <input asp-for="Password" class="form-control" style="width: 25%" />
         <span asp-validation-for="Password"></span><br />
     </div>
     <div>
-        <label asp-for="ConfirmPassword">Confirm Password</label>
+        <label>Confirm Password</label>
         <input asp-for="ConfirmPassword" class="form-control" style="width: 25%" />
         <span asp-validation-for="ConfirmPassword"></span><br />
     </div>
     <br />
-    <div class="row">
-        <input type="submit" class="btn btn-primary" style="width:100px; margin-right:50px" value="Create" />
-        <a class="btn btn-primary" style="width:100px" asp-area="" asp-controller="Authentication" asp-action="Login">Login</a>
-    </div>
+    <input type="submit" class="btn btn-primary" style="width:100px; margin-right: 50px" value="Create" />
+    <a class="btn btn-primary" style="width: 100px" asp-controller="Authentication" asp-action="Login">Login</a>
 </form>

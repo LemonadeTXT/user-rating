@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Main Page";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@foreach (var user in Model)
+{
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5>
+                @user.FirstName @user.LastName
+            </h5>
+        </div>
+        <div class="card-body">
+            @if (@user.Avatar == null)
+            {
+                <img alt="Empty Avatar" class="avatar-view" src="~/images/empty icon.png">
+            }
+            else
+            {
+                var imgsrc = string.Format("data:image/png;base64," + Convert.ToBase64String(@user.Avatar));
+
+                <img alt="Avatar" class="avatar-view" src="@imgsrc">
+            }
+            <p>
+                <b>Age:</b> @user.Age
+            </p>
+            <p>
+                <b>City:</b> @user.City
+            </p>
+            <p>
+                <b>About Me:</b> @user.AboutMe
+            </p>
+        </div>
+        <div class="card-footer">
+            <form method="post">
+                <button class="enable-hover" name="id" value="@user.Id" asp-controller="Home" asp-action="Like" style="height: 65px; border: none; background: none">
+                    <img alt="Like" class="button-view" src="~/images/like.png"><p>@user.Likes</p>
+                </button>
+                <button class="enable-hover" name="id" value="@user.Id" asp-controller="Home" asp-action="Dislike" style="height: 65px; border: none; background: none">
+                    <img alt="Dislike" class="button-view" src="~/images/dislike.png"><p>@user.Dislikes</p>
+                    </button>
+            </form>
+        </div>
+    </div>
+}

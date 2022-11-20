@@ -3,46 +3,50 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using UserRating.Data;
 using UserRating.Models;
 using UserRating.ViewModels;
-using Microsoft.EntityFrameworkCore;
+using UserRating.Infrastructure.ServiceInterfaces;
 
 namespace UserRating.Controllers
 {
     public class AuthenticationController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUserService _userService;
+        private readonly IAuthService _authService;
 
-        public AuthenticationController(ApplicationDbContext db)
+        public AuthenticationController(IUserService userService, IAuthService authService)
         {
-            _db = db;
+            _userService = userService;
+            _authService = authService;
         }
 
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("HomePage", "Home");
+            }
+
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LogInViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
             if (ModelState.IsValid)
             {
-                var user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.Password == model.Password);
-
-                if (user is not null)
+                if (_authService.IsLogin(loginViewModel.Login, loginViewModel.Password, out int id))
                 {
-                    await Authenticate(user.Login);
+                    var user = _userService.Get(id);
 
-                    return RedirectToAction("Main", "User");
+                    await Authenticate(user);
+
+                    return RedirectToAction("Profile", "Profile");
                 }
-
-                ModelState.AddModelError("", "Wrong username and/or password!");
             }
 
-            return View(model);
+            return View(loginViewModel);
         }
 
         public IActionResult SignUp()
@@ -52,32 +56,33 @@ namespace UserRating.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp(SignUpViewModel model)
+        public async Task<IActionResult> SignUp(SignUpViewModel signUpViewModel)
         {
             if (ModelState.IsValid)
             {
-                var user = await _db.Users.FirstOrDefaultAsync(u => u.Login == model.Login);
-
-                if (user is null)
+                if (_authService.IsRegistration(signUpViewModel.Login, signUpViewModel.Email))
                 {
-                    _db.Users.Add(new User {
-                        Login = model.Login,
-                        Password = model.Password,
-                    });
-
-                    await _db.SaveChangesAsync();
-
-                    await Authenticate(model.Login);
-
-                    return RedirectToAction("Main", "User");
+                    return View(signUpViewModel);
                 }
-                else
+
+                var user = new User
                 {
-                    ModelState.AddModelError("", "Wrong username and/or password!");
-                }
+                    Email = signUpViewModel.Email,
+                    Login = signUpViewModel.Login,
+                    Password = signUpViewModel.Password,
+                    Role = 0
+                };
+
+                _userService.Create(user);
+
+                user.Id = _userService.GetLastId();
+
+                await Authenticate(user);
+
+                return RedirectToAction("Edit", "Profile");
             }
 
-            return View(model);
+            return View(signUpViewModel);
         }
 
         [Authorize]
@@ -85,19 +90,22 @@ namespace UserRating.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return RedirectToAction("Main", "User");
+            return RedirectToAction("HomePage", "Home");
         }
 
-        private async Task Authenticate(string userName)
+        private async Task Authenticate(User user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
+                new Claim(ClaimTypes.Name, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
-            var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            var claimIdentity =
+                new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimIdentity));
         }
     }
 }

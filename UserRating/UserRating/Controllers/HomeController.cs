@@ -1,32 +1,87 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using UserRating.Infrastructure.ServiceInterfaces;
 using UserRating.Models;
 
 namespace UserRating.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IUserService _userService;
+        private readonly IProfileService _profileService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUserService userService, IProfileService profileService)
         {
-            _logger = logger;
+            _userService = userService;
+            _profileService = profileService;
         }
 
-        public IActionResult Index()
+        public IActionResult HomePage()
         {
-            return View();
+            var users = new List<User>(_userService.GetAll());
+
+            return View(RemoveIncompleteUsers(users));
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        [Authorize]
+        public IActionResult Like(int id)
         {
-            return View();
+            var appraiser = _userService.Get(int.Parse(User.Identity.Name));
+
+            var likedUser = _userService.Get(id);
+
+            if (likedUser.Id != appraiser.Id)
+            {
+                _profileService.Like(likedUser.Id, appraiser.Id);
+            }
+
+            return RedirectToAction(nameof(HomePage));
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        [Authorize]
+        public IActionResult Dislike(int id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var appraiser = _userService.Get(int.Parse(User.Identity.Name));
+
+            var likedUser = _userService.Get(id);
+
+            if (likedUser.Id != appraiser.Id)
+            {
+                _profileService.Dislike(likedUser.Id, appraiser.Id);
+            }
+
+            return RedirectToAction(nameof(HomePage));
+        }
+
+        private List<User> RemoveIncompleteUsers(List<User> users)
+        {
+            foreach (var item in users.ToList())
+            {
+                if (string.IsNullOrEmpty(item.FirstName))
+                {
+                    users.Remove(item);
+                }
+                else if (string.IsNullOrEmpty(item.LastName))
+                {
+                    users.Remove(item);
+                }
+                else if (item.Age is 0)
+                {
+                    users.Remove(item);
+                }
+                else if (string.IsNullOrEmpty(item.City))
+                {
+                    users.Remove(item);
+                }
+                else if (string.IsNullOrEmpty(item.AboutMe))
+                {
+                    users.Remove(item);
+                }
+            }
+
+            return users;
         }
     }
 }
