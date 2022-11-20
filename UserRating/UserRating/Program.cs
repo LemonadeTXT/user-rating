@@ -1,6 +1,8 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using UserRating.Infrastructure.Connection;
+using UserRating.Infrastructure.Mappers;
 using UserRating.Infrastructure.Repository;
 using UserRating.Infrastructure.RepositoryInterfaces;
 using UserRating.Infrastructure.ServiceInterfaces;
@@ -27,6 +29,15 @@ namespace UserRating
                 {
                     options.LoginPath = new PathString("/Authentication/Login");
                 });
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+
+            builder.Services.AddSingleton(mapper);
 
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IUserRepository, UserRepository>();
