@@ -42,8 +42,6 @@ namespace UserRating.Infrastructure.Services
 
         public void Create(User user)
         {
-            user.Password = Convert.ToBase64String(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(user.Password)));
-
             _userRepository.Create(user);
         }
 
