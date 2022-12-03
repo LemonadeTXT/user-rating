@@ -121,7 +121,7 @@ namespace UserRating.Infrastructure.Repository
 
                 command.Parameters.Add(new SqlParameter("Avatar", SqlDbType.Binary)
                 {
-                    Value = user.Avatar
+                    Value = user.Avatar != null ? user.Avatar : DBNull.Value,
                 });
 
                 command.Parameters.AddWithValue("Email", user.Email);
